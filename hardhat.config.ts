@@ -1,7 +1,8 @@
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
+import { HardhatUserConfig } from "hardhat/types";
 
-export default {
+const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: false,
@@ -40,11 +41,6 @@ export default {
       url: `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
     },
   },
-  etherscan: {
-    // Your API key for Etherscan
-    // Obtain one at https://etherscan.io/
-    apiKey: process.env.ETHERSCAN_API_KEY,
-  },
   solidity: {
     version: "0.8.4",
     settings: {
@@ -61,3 +57,5 @@ export default {
     },
   },
 };
+
+export default config;

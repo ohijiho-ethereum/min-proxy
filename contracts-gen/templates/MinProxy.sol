@@ -5,9 +5,9 @@ library MinProxy {
     function getCode(address impl) internal pure returns (bytes memory) {
         return
             abi.encodePacked(
-                hex"602d8060093d393df3363d3d373d3d3d363d73",
+                hex"{{236387cde17a3e2ebf0c83da3c66fefc98f2cc57}}",
                 impl,
-                hex"5af43d82803e903d91602b57fd5bf3"
+                hex"{{}}"
             );
     }
 }

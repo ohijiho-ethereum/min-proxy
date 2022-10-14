@@ -8,16 +8,19 @@
   "main": "index.js",
   "files": [
     "/contracts",
+    "/contracts-gen",
     "!/contracts/test",
     "!/contracts/mocks"
   ],
   "scripts": {
     "build": "hardhat compile",
+    "prebuild": "ts-node scripts/prebuild.ts",
     "test": "hardhat test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@ethersproject/asm": "^5.7.0",
     "@nomiclabs/hardhat-ethers": "^2.2.0",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.3",

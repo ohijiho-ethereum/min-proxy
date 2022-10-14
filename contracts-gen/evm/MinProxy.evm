@@ -1,0 +1,39 @@
+{{!
+    const impl = "0x" + (defines.splits?.[0] ?? "ff".repeat(20));
+}}
+
+#code                   ; len
+dup1                    ; len len
+$code                   ; ost len len
+returndatasize          ; 0 ost len len
+codecopy                ; len
+returndatasize          ; 0 len
+return
+
+; https://eips.ethereum.org/EIPS/eip-1167
+@code {
+    calldatasize            ; cds
+    returndatasize          ; 0 cds
+    returndatasize          ; 0 0 cds
+    calldatacopy
+    returndatasize          ; 0
+    returndatasize          ; 0 0
+    returndatasize          ; 0 0 0
+    calldatasize            ; cds 0 0 0
+    returndatasize          ; 0 cds 0 0 0
+    {{=impl}}               ; impl 0 cds 0 0 0
+    gas                     ; gas 0xbebe 0 cds 0 0 0
+    delegatecall            ; suc 0
+    returndatasize          ; rds suc 0
+    dup3                    ; 0 rds suc 0
+    dup1                    ; 0 0 rds suc 0
+    returndatacopy          ; suc 0
+    swap1                   ; 0 suc
+    returndatasize          ; rds 0 suc
+    swap2                   ; suc 0 rds
+    $callOk                 ; callOk suc 0 rds
+    jumpi                   ; 0 rds
+    revert
+    @callOk:                ; 0 rds
+    return
+}

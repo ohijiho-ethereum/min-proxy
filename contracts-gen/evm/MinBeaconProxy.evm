@@ -1,0 +1,54 @@
+{{!
+    const beacon = "0x" + (defines.splits?.[0] ?? "ff".repeat(20));
+}}
+
+#code                   ; len
+dup1                    ; len len
+$code                   ; ost len len
+returndatasize          ; 0 ost len len
+codecopy                ; len
+returndatasize          ; 0 len
+return
+
+@code {
+    {{=sighash("implementation()")}} ; selector
+    returndatasize          ; 0 selector
+    mstore
+    returndatasize          ; 0
+    returndatasize          ; 0 0
+    returndatasize          ; 0 0 0
+    calldatasize            ; cds 0 0 0
+    returndatasize          ; 0 cds 0 0 0
+    returndatasize          ; 0 0 cds 0 0 0
+    calldatasize            ; cds 0 0 cds 0 0 0
+    returndatasize          ; 0 cds 0 0 cds 0 0 0
+    returndatasize          ; 0 0 cds 0 0 cds 0 0 0
+    0x20                    ; 0x20 0 0 cds 0 0 cds 0 0 0
+    returndatasize          ; 0 0x20 0 0 cds 0 0 cds 0 0 0
+    0x04                    ; 4 0 0x20 0 0 cds 0 0 cds 0 0 0
+    0x1c                    ; 0x1c 4 0 0x20 0 0 cds 0 0 cds 0 0 0
+    {{=beacon}}             ; beacon 0x1c 4 0 0x20 0 0 cds 0 0 cds 0 0 0
+    gas                     ; gas beacon 0x1c 4 0 0x20 0 0 cds 0 0 cds 0 0 0
+    staticcall              ; suc 0 0 cds 0 0 cds 0 0 0
+    $beaconOk               ; beaconOk suc 0 0 cds 0 0 cds 0 0 0
+    jumpi                   ; 0 0 cds 0 0 cds 0 0 0
+    revert
+    @beaconOk:              ; 0 0 cds 0 0 cds 0 0 0
+    mload                   ; impl 0 cds 0 0 cds 0 0 0
+    swap3                   ; 0 0 cds impl 0 cds 0 0 0
+    calldatacopy            ; impl 0 cds 0 0 0
+    gas                     ; gas impl 0 cds 0 0 0
+    delegatecall            ; suc 0
+    returndatasize          ; rds suc 0
+    dup3                    ; 0 rds suc 0
+    dup1                    ; 0 0 rds suc 0
+    returndatacopy          ; suc 0
+    swap1                   ; 0 suc
+    returndatasize          ; rds 0 suc
+    swap2                   ; suc 0 rds
+    $callOk                 ; callOk suc 0 rds
+    jumpi                   ; 0 rds
+    revert
+    @callOk:                ; 0 rds
+    return
+}
