@@ -1,0 +1,44 @@
+{
+  "name": "min-proxy",
+  "version": "0.0.1",
+  "description": "",
+  "engines": {
+    "node": ">=14"
+  },
+  "main": "index.js",
+  "files": [
+    "/contracts",
+    "!/contracts/test",
+    "!/contracts/mocks"
+  ],
+  "scripts": {
+    "build": "hardhat compile",
+    "test": "hardhat test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.0",
+    "@typechain/ethers-v5": "^10.1.0",
+    "@typechain/hardhat": "^6.1.3",
+    "@types/chai": "^4.3.3",
+    "@types/mocha": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "chai": "^4.3.6",
+    "eslint": "^8.25.0",
+    "ethers": "^5.7.1",
+    "hardhat": "^2.12.0",
+    "mocha": "^10.0.0",
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.24",
+    "solhint": "^3.3.7",
+    "solhint-plugin-prettier": "^0.0.5",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.1.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3"
+  }
+}
