@@ -1,7 +1,7 @@
 {
   "name": "solidity-min-proxy",
   "version": "0.0.1",
-  "description": "minimal proxy implementation and solidity integration",
+  "description": "minimal ethereum proxy contract implementation with solidity integration",
   "engines": {
     "node": ">=14"
   },
