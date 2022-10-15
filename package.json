@@ -3,7 +3,7 @@
   "version": "0.0.2-0",
   "description": "minimal ethereum proxy contract implementation with solidity integration",
   "engines": {
-    "node": ">=14"
+    "node": ">=16 <18"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,7 +24,7 @@
     "compile-ts": "tsc -p tsconfig.build.json",
     "build": "npm run compile-contracts",
     "test": "hardhat test",
-    "prepublishOnly": "npm run lint && npm run build && npm test && npm run compile-ts"
+    "prepack": "npm run lint && npm run build && npm test && npm run compile-ts"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
