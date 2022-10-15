@@ -1,6 +1,6 @@
 {
   "name": "@ohijiho-ethereum/min-proxy",
-  "version": "0.0.2-0",
+  "version": "0.0.2-1",
   "description": "minimal ethereum proxy contract implementation with solidity integration",
   "engines": {
     "node": ">=16 <18"
