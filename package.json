@@ -1,5 +1,5 @@
 {
-  "name": "solidity-min-proxy",
+  "name": "@ohijiho-ethereum/min-proxy",
   "version": "0.0.1",
   "description": "minimal ethereum proxy contract implementation with solidity integration",
   "engines": {
@@ -25,6 +25,13 @@
     "build": "npm run compile-contracts",
     "test": "hardhat test",
     "prepublishOnly": "npm run lint && npm run build && npm test && npm run compile-ts"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ohijiho-ethereum/min-proxy.git"
   },
   "author": "",
   "license": "ISC",
