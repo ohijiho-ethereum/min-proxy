@@ -7,6 +7,7 @@ import { parse, assemble } from "@ethersproject/asm";
 const root = path.join(__dirname, "..");
 const inDir = path.join(root, "contracts-gen");
 const outDir = path.join(root, "contracts");
+const segDir = path.join(root, "lib/bytecodes");
 const evmDir = path.join(inDir, "evm");
 const tmplDir = path.join(inDir, "templates");
 
@@ -49,6 +50,7 @@ const encoders = {
 async function generate(name: string) {
   const template = (await fs.readFile(path.join(tmplDir, `${name}.sol`))).toString("utf-8");
   const matches = [...template.matchAll(interpolatePattern)];
+
   const bytecode = (
     await assemble(
       parse((await fs.readFile(path.join(evmDir, `${name}.evm`))).toString("utf-8"), { ignoreWarnings: true }),
@@ -57,7 +59,9 @@ async function generate(name: string) {
       }
     )
   ).substring(2);
+
   const chunks: string[] = [];
+  const segments: string[] = [];
   let templateStart = 0;
   let bytecodeStart = 0;
   for (let i = 0; i < matches.length; i++) {
@@ -65,27 +69,44 @@ async function generate(name: string) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const groups = m.groups!;
     const { split, encoding } = groups;
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const templateEnd = m.index!;
     const bytecodeEnd = split ? bytecode.indexOf(split, bytecodeStart) : bytecode.length;
+
     if (bytecodeEnd === -1) throw new Error(`split not found: ${split}`);
-    chunks.push(
-      template.substring(templateStart, templateEnd),
-      encoders[encoding as keyof typeof encoders](bytecode.substring(bytecodeStart, bytecodeEnd))
-    );
+
+    const segment = bytecode.substring(bytecodeStart, bytecodeEnd);
+
+    chunks.push(template.substring(templateStart, templateEnd), encoders[encoding as keyof typeof encoders](segment));
+    segments.push(segment);
+
     templateStart = templateEnd + m[0].length;
     bytecodeStart = bytecodeEnd + split.length;
   }
   chunks.push(template.substring(templateStart));
+
+  {
+    const segPath = path.join(segDir, `${name}.json`);
+    await fs.mkdir(path.dirname(segPath), { recursive: true });
+    await fs.writeFile(segPath, JSON.stringify(segments));
+  }
+
   const outPath = path.join(outDir, `${name}.sol`);
-  await fs.mkdir(path.dirname(outPath), { recursive: true });
-  const outFile = await fs.open(outPath, "w");
+
   const proc = child_process.spawn("npx", ["prettier", "--stdin-filepath", outPath], {
     stdio: ["pipe", "pipe", "inherit"],
   });
+
+  {
+    await fs.mkdir(path.dirname(outPath), { recursive: true });
+    const outFile = await fs.open(outPath, "w");
+    const fileStream = outFile.createWriteStream();
+    proc.stdout.pipe(fileStream);
+  }
+
   Readable.from(chunks.map((x) => Buffer.from(x, "utf-8"))).pipe(proc.stdin);
-  const fileStream = outFile.createWriteStream();
-  proc.stdout.pipe(fileStream);
+
   await Promise.all([
     new Promise<void>((resolve, reject) => {
       proc.once("exit", (code) => {
