@@ -5,9 +5,9 @@ library MinBeaconProxy {
     function getCode(address beacon) internal pure returns (bytes memory) {
         return
             abi.encodePacked(
-                hex"60458060093d393df3635c60da1b3d523d3d3d363d3d363d3d60203d6004601c73",
+                "`E\x80`\t=9=\xf3c\\`\xda\x1b=R===6==6==` =`\x04`\x1cs",
                 beacon,
-                hex"5afa603257fd5b5192375af43d82803e903d91604357fd5bf3"
+                "Z\xfa`2W\xfd[Q\x927Z\xf4=\x82\x80>\x90=\x91`CW\xfd[\xf3"
             );
     }
 }
