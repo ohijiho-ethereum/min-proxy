@@ -1,4 +1,5 @@
 artifacts/
 cache/
 node_modules/
-typechain-types/
+/typechain-types/
+/dist/

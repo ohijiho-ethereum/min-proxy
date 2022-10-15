@@ -1,21 +1,26 @@
 {
-  "name": "min-proxy",
+  "name": "solidity-min-proxy",
   "version": "0.0.1",
-  "description": "",
+  "description": "minimal proxy implementation and solidity integration",
   "engines": {
     "node": ">=14"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "/contracts",
     "/contracts-gen",
+    "/dist",
     "!/contracts/test",
     "!/contracts/mocks"
   ],
   "scripts": {
-    "build": "hardhat compile",
-    "prebuild": "ts-node scripts/prebuild.ts",
-    "test": "hardhat test"
+    "compile-contracts": "hardhat compile",
+    "precompile-contracts": "ts-node scripts/prebuild.ts",
+    "compile-ts": "tsc -p tsconfig.build.json",
+    "build": "npm run compile-contracts",
+    "test": "hardhat test",
+    "prepublishOnly": "npm run compile-ts"
   },
   "author": "",
   "license": "ISC",
