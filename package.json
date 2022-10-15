@@ -15,12 +15,16 @@
     "!/contracts/mocks"
   ],
   "scripts": {
+    "solhint": "npx solhint 'contracts/**/*.sol'",
+    "eslint": "npx eslint .",
+    "prettier": "npx prettier --check 'contracts/**/*.sol' '{lib,test,scripts}/**/*.ts'",
+    "lint": "npm run solhint && npm run eslint && npm run prettier",
     "compile-contracts": "hardhat compile",
     "precompile-contracts": "ts-node scripts/prebuild.ts",
     "compile-ts": "tsc -p tsconfig.build.json",
     "build": "npm run compile-contracts",
     "test": "hardhat test",
-    "prepublishOnly": "npm run compile-ts"
+    "prepublishOnly": "npm run lint && npm run build && npm test && npm run compile-ts"
   },
   "author": "",
   "license": "ISC",
