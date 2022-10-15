@@ -11,41 +11,39 @@ const segDir = path.join(root, "lib/bytecodes");
 const evmDir = path.join(inDir, "evm");
 const tmplDir = path.join(inDir, "templates");
 
-const interpolatePattern = /\{\{(?<split>([0-9A-Fa-f]{2})*):(?<encoding>ascii|hex)}}/g;
-
-const asciiTable = (() => {
-  function* range<T>(start: number, end: number, func: (x: number) => T) {
-    for (let i = start; i < end; i++) {
-      yield func(i);
-    }
-  }
-
-  return [
-    "\\0",
-    ...range(1, 8, (x) => `\\x0${x}`),
-    ...[..."btnvfr"].map((c) => "\\" + c),
-    "\\x0e",
-    "\\x0f",
-    ...range(16, 32, (x) => `\\x${x.toString(16)}`),
-    ..." !",
-    '\\"',
-    ..."#$%&",
-    "\\'",
-    ...range(0x28, 0x5c, (x) => String.fromCharCode(x)),
-    "\\\\",
-    ...range(0x5d, 0x7f, (x) => String.fromCharCode(x)),
-    ...range(0x7f, 0x100, (x) => `\\x${x.toString(16)}`),
-  ].flat(1);
-})();
-
 const encoders = {
-  ascii(bytecode: string) {
-    return [...Buffer.from(bytecode, "hex")].map((x) => asciiTable[x]).join("");
-  },
+  ascii: (() => {
+    function* range<T>(start: number, end: number, func: (x: number) => T) {
+      for (let i = start; i < end; i++) {
+        yield func(i);
+      }
+    }
+
+    const asciiTable = [
+      "\\0",
+      ...range(1, 8, (x) => `\\x0${x}`),
+      ...[..."btnvfr"].map((c) => "\\" + c),
+      "\\x0e",
+      "\\x0f",
+      ...range(16, 32, (x) => `\\x${x.toString(16)}`),
+      ..." !",
+      '\\"',
+      ..."#$%&",
+      "\\'",
+      ...range(0x28, 0x5c, (x) => String.fromCharCode(x)),
+      "\\\\",
+      ...range(0x5d, 0x7f, (x) => String.fromCharCode(x)),
+      ...range(0x7f, 0x100, (x) => `\\x${x.toString(16)}`),
+    ].flat(1);
+
+    return (bytecode: string) => [...Buffer.from(bytecode, "hex")].map((x) => asciiTable[x]).join("");
+  })(),
   hex(bytecode: string) {
     return bytecode;
   },
 };
+
+const interpolatePattern = /\{\{(?<split>([0-9A-Fa-f]{2})*):(?<encoding>ascii|hex)}}/g;
 
 async function generate(name: string) {
   const template = (await fs.readFile(path.join(tmplDir, `${name}.sol`))).toString("utf-8");
